@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¡Cazador de Múltiplos!</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #FFD700;
+    --yellow-dark: #F0C000;
+    --green: #2ECC71;
+    --green-dark: #27AE60;
+    --red: #E74C3C;
+    --red-dark: #C0392B;
+    --dark: #1a1a2e;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--yellow);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* SUNBURST */
+  .sunburst {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 200vmax; height: 200vmax;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(
+      from 0deg,
+      rgba(255,255,255,0.12) 0deg, rgba(255,255,255,0.12) 18deg,
+      transparent 18deg, transparent 36deg,
+      rgba(255,255,255,0.12) 36deg, rgba(255,255,255,0.12) 54deg,
+      transparent 54deg, transparent 72deg,
+      rgba(255,255,255,0.12) 72deg, rgba(255,255,255,0.12) 90deg,
+      transparent 90deg, transparent 108deg,
+      rgba(255,255,255,0.12) 108deg, rgba(255,255,255,0.12) 126deg,
+      transparent 126deg, transparent 144deg,
+      rgba(255,255,255,0.12) 144deg, rgba(255,255,255,0.12) 162deg,
+      transparent 162deg, transparent 180deg,
+      rgba(255,255,255,0.12) 180deg, rgba(255,255,255,0.12) 198deg,
+      transparent 198deg, transparent 216deg,
+      rgba(255,255,255,0.12) 216deg, rgba(255,255,255,0.12) 234deg,
+      transparent 234deg, transparent 252deg,
+      rgba(255,255,255,0.12) 252deg, rgba(255,255,255,0.12) 270deg,
+      transparent 270deg, transparent 288deg,
+      rgba(255,255,255,0.12) 288deg, rgba(255,255,255,0.12) 306deg,
+      transparent 306deg, transparent 324deg,
+      rgba(255,255,255,0.12) 324deg, rgba(255,255,255,0.12) 342deg,
+      transparent 342deg, transparent 360deg
+    );
+    animation: rotateSunburst 30s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  @keyframes rotateSunburst {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* CONFETTI CANVAS */
+  #confettiCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* SCREENS */
+  .screen {
+    position: relative;
+    z-index: 10;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .screen.active { display: flex; }
+
+  /* ===== INICIO SCREEN ===== */
+  .game-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 10vw, 7rem);
+    color: var(--dark);
+    text-shadow:
+      4px 4px 0 rgba(0,0,0,0.2),
+      -2px -2px 0 rgba(255,255,255,0.3);
+    letter-spacing: 4px;
+    line-height: 1;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: rgba(0,0,0,0.5);
+    letter-spacing: 3px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .config-card {
+    background: var(--dark);
+    border-radius: 24px;
+    padding: 40px 50px;
+    box-shadow:
+      8px 8px 0 rgba(0,0,0,0.3),
+      0 0 0 4px var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: min(420px, 90vw);
+  }
+
+  .config-label {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    color: var(--yellow);
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  .number-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .btn-adj {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 3px solid var(--yellow);
+    background: transparent;
+    color: var(--yellow);
+    font-size: 1.8rem;
+    font-family: 'Bangers', cursive;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .btn-adj:hover { background: var(--yellow); color: var(--dark); transform: scale(1.1); }
+  .btn-adj:active { transform: scale(0.95); }
+
+  #masterNumberDisplay {
+    font-family: 'Bangers', cursive;
+    font-size: 5rem;
+    color: var(--yellow);
+    min-width: 100px;
+    text-align: center;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  }
+
+  .btn-start {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    color: var(--dark);
+    background: var(--yellow);
+    border: none;
+    border-radius: 16px;
+    padding: 16px 48px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.3), 0 8px 20px rgba(0,0,0,0.3);
+    transition: all 0.15s;
+    width: 100%;
+  }
+  .btn-start:hover { transform: translateY(-3px); box-shadow: 0 9px 0 rgba(0,0,0,0.3), 0 12px 24px rgba(0,0,0,0.3); }
+  .btn-start:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+
+  /* ===== JUEGO SCREEN ===== */
+  .hud {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: var(--dark);
+    z-index: 20;
+    gap: 12px;
+  }
+
+  .hud-badge {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hud-master {
+    color: var(--yellow);
+  }
+
+  .hud-score {
+    display: flex;
+    gap: 16px;
+  }
+
+  .score-good { color: var(--green); }
+  .score-bad { color: var(--red); }
+
+  .progress-bar-wrap {
+    flex: 1;
+    max-width: 200px;
+    height: 10px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--yellow);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding-top: 80px;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .question-label {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: rgba(0,0,0,0.45);
+    letter-spacing: 3px;
+    text-align: center;
+  }
+
+  /* NUMBER CARD */
+  .number-card {
+    width: clamp(180px, 35vw, 280px);
+    height: clamp(180px, 35vw, 280px);
+    background: var(--dark);
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      10px 10px 0 rgba(0,0,0,0.25),
+      0 0 0 5px rgba(255,255,255,0.1) inset;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #currentNumber {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(5rem, 15vw, 10rem);
+    color: var(--yellow);
+    text-shadow: 0 0 30px rgba(255,215,0,0.4);
+    line-height: 1;
+    transition: color 0.3s;
+  }
+
+  .sad-face {
+    font-size: clamp(5rem, 15vw, 10rem);
+    display: none;
+    animation: popIn 0.3s ease;
+  }
+
+  .number-card.wrong #currentNumber { color: #aaa; }
+  .number-card.wrong .sad-face { display: flex; }
+  .number-card.wrong #currentNumber { display: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeZoomIn {
+    from { opacity: 0; transform: scale(0.3); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes popIn {
+    0%   { transform: scale(0); }
+    70%  { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    15%      { transform: translateX(-12px) rotate(-2deg); }
+    30%      { transform: translateX(12px) rotate(2deg); }
+    45%      { transform: translateX(-10px); }
+    60%      { transform: translateX(10px); }
+    75%      { transform: translateX(-6px); }
+    90%      { transform: translateX(6px); }
+  }
+  @keyframes correctPop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+
+  .number-card.animate-in { animation: fadeZoomIn 0.45s cubic-bezier(0.175,0.885,0.32,1.275); }
+  .number-card.shake { animation: shake 0.5s ease; }
+  .number-card.correct-pop { animation: correctPop 0.35s ease; }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: clamp(16px, 4vw, 40px);
+    align-items: center;
+  }
+
+  .answer-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: transform 0.15s;
+  }
+  .answer-btn:active { transform: scale(0.9); }
+
+  .shield {
+    width: clamp(90px, 18vw, 140px);
+    height: clamp(100px, 20vw, 155px);
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .shield-yes {
+    background: linear-gradient(145deg, #3EE88A, var(--green));
+    box-shadow:
+      0 8px 0 var(--green-dark),
+      0 12px 24px rgba(46,204,113,0.4),
+      inset 0 2px 4px rgba(255,255,255,0.3);
+  }
+  .shield-no {
+    background: linear-gradient(145deg, #F0786B, var(--red));
+    box-shadow:
+      0 8px 0 var(--red-dark),
+      0 12px 24px rgba(231,76,60,0.4),
+      inset 0 2px 4px rgba(255,255,255,0.3);
+  }
+
+  .answer-btn:hover .shield-yes {
+    box-shadow: 0 12px 0 var(--green-dark), 0 18px 30px rgba(46,204,113,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+    transform: translateY(-4px);
+  }
+  .answer-btn:hover .shield-no {
+    box-shadow: 0 12px 0 var(--red-dark), 0 18px 30px rgba(231,76,60,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+    transform: translateY(-4px);
+  }
+  .answer-btn:active .shield { transform: translateY(4px) !important; }
+
+  .btn-label {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    letter-spacing: 2px;
+    color: var(--dark);
+  }
+
+  /* ===== RESULTADO SCREEN ===== */
+  .result-card {
+    background: var(--dark);
+    border-radius: 28px;
+    padding: clamp(28px, 5vw, 52px) clamp(28px, 6vw, 64px);
+    box-shadow: 10px 10px 0 rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: min(500px, 90vw);
+    text-align: center;
+  }
+
+  .result-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: var(--yellow);
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+
+  .result-master {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .score-box {
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .score-box-good { background: rgba(46,204,113,0.15); border: 2px solid var(--green); }
+  .score-box-bad  { background: rgba(231,76,60,0.15);  border: 2px solid var(--red); }
+
+  .score-box-number {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 8vw, 4.5rem);
+    line-height: 1;
+  }
+  .score-box-good .score-box-number { color: var(--green); }
+  .score-box-bad  .score-box-number { color: var(--red); }
+
+  .score-box-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .stars-row {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    letter-spacing: 4px;
+  }
+
+  .result-msg {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    color: rgba(255,255,255,0.6);
+    max-width: 320px;
+  }
+
+  .result-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .btn-result {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex: 1;
+    min-width: 140px;
+  }
+  .btn-result:hover { transform: translateY(-3px); }
+  .btn-result:active { transform: translateY(2px); }
+
+  .btn-again { background: var(--yellow); color: var(--dark); box-shadow: 0 5px 0 rgba(0,0,0,0.3); }
+  .btn-change { background: transparent; color: var(--yellow); border: 2px solid rgba(255,215,0,0.4); }
+  .btn-change:hover { border-color: var(--yellow); }
+
+  /* FEEDBACK FLASH */
+  .flash-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+  .flash-overlay.flash-red { background: rgba(231,76,60,0.25); }
+  .flash-overlay.flash-green { background: rgba(46,204,113,0.2); }
+  .flash-overlay.visible { opacity: 1; }
+
+  /* KEYBOARD HINT */
+  .key-hint {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: rgba(0,0,0,0.35);
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: -20px;
+  }
+
+  kbd {
+    display: inline-block;
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: inherit;
+  }
+
+  /* DIFFICULTY SELECTOR */
+  .diff-label {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    color: rgba(255,215,0,0.6);
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  .diff-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .btn-diff {
+    flex: 1;
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 10px 4px;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(255,255,255,0.45);
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    line-height: 1.2;
+  }
+  .btn-diff .diff-icon { font-size: 1.3rem; }
+  .btn-diff .diff-range { font-size: 0.7rem; letter-spacing: 0; color: rgba(255,255,255,0.3); font-family: 'Nunito', sans-serif; font-weight: 700; }
+
+  .btn-diff:hover { border-color: rgba(255,215,0,0.4); color: rgba(255,215,0,0.7); }
+
+  .btn-diff.active-easy   { background: rgba(46,204,113,0.18); border-color: #2ECC71; color: #2ECC71; }
+  .btn-diff.active-easy .diff-range { color: rgba(46,204,113,0.6); }
+  .btn-diff.active-medium { background: rgba(255,165,0,0.18);  border-color: #FFA500; color: #FFA500; }
+  .btn-diff.active-medium .diff-range { color: rgba(255,165,0,0.6); }
+  .btn-diff.active-hard   { background: rgba(231,76,60,0.18);  border-color: #E74C3C; color: #E74C3C; }
+  .btn-diff.active-hard .diff-range { color: rgba(231,76,60,0.6); }
+
+  /* HUD difficulty badge */
+  .hud-diff {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    letter-spacing: 1px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 2px solid;
+  }
+  .hud-diff.easy   { color: #2ECC71; border-color: #2ECC71; }
+  .hud-diff.medium { color: #FFA500; border-color: #FFA500; }
+  .hud-diff.hard   { color: #E74C3C; border-color: #E74C3C; }
+</style>
+</head>
+<body>
+
+<div class="sunburst"></div>
+<canvas id="confettiCanvas"></canvas>
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<!-- ===== SCREEN: INICIO ===== -->
+<div class="screen active" id="screenInicio">
+  <div class="game-title">¡CAZADOR<br>DE MÚLTIPLOS!</div>
+  <div class="subtitle">JUEGO DE MATEMÁTICAS · 6TO BÁSICO</div>
+
+  <div class="config-card">
+    <div class="config-label">⚡ NÚMERO MAESTRO</div>
+    <div class="number-input-wrapper">
+      <button class="btn-adj" id="btnMinus">−</button>
+      <div id="masterNumberDisplay">6</div>
+      <button class="btn-adj" id="btnPlus">+</button>
+    </div>
+
+    <div class="diff-label">🎯 DIFICULTAD</div>
+    <div class="diff-row">
+      <button class="btn-diff active-easy" data-diff="easy">
+        <span class="diff-icon">🌱</span>
+        FÁCIL
+        <span class="diff-range">hasta ×10</span>
+      </button>
+      <button class="btn-diff" data-diff="medium">
+        <span class="diff-icon">⚡</span>
+        MEDIO
+        <span class="diff-range">hasta ×12</span>
+      </button>
+      <button class="btn-diff" data-diff="hard">
+        <span class="diff-icon">🔥</span>
+        DIFÍCIL
+        <span class="diff-range">hasta ×15</span>
+      </button>
+    </div>
+
+    <button class="btn-start" id="btnStart">🚀 &nbsp;¡COMENZAR!</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: JUEGO ===== -->
+<div class="screen" id="screenJuego">
+  <div class="hud">
+    <div class="hud-badge hud-master">⚡ ×<span id="hudMaster">6</span></div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="hud-score">
+      <div class="hud-diff easy" id="hudDiff">FÁCIL</div>
+      <div class="hud-badge score-good">✅ <span id="hudGood">0</span></div>
+      <div class="hud-badge score-bad">❌ <span id="hudBad">0</span></div>
+    </div>
+  </div>
+
+  <div class="game-area">
+    <div class="question-label">¿ES MÚLTIPLO DE <span id="questionMaster">6</span>?</div>
+
+    <div class="number-card" id="numberCard">
+      <div id="currentNumber">42</div>
+      <div class="sad-face">☹️</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="answer-btn" id="btnYes">
+        <div class="shield shield-yes">👍</div>
+        <span class="btn-label">SÍ</span>
+      </button>
+      <button class="answer-btn" id="btnNo">
+        <div class="shield shield-no">❌</div>
+        <span class="btn-label">NO</span>
+      </button>
+    </div>
+
+    <div class="key-hint"><kbd>S</kbd> = SÍ &nbsp;|&nbsp; <kbd>N</kbd> = NO</div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: RESULTADO ===== -->
+<div class="screen" id="screenResultado">
+  <div class="result-card">
+    <div class="result-title" id="resultTitle">¡MISIÓN<br>CUMPLIDA!</div>
+    <div class="result-master">NÚMERO MAESTRO: ×<span id="resultMaster">6</span></div>
+
+    <div class="score-grid">
+      <div class="score-box score-box-good">
+        <div class="score-box-number" id="finalGood">0</div>
+        <div class="score-box-label">✅ Correctas</div>
+      </div>
+      <div class="score-box score-box-bad">
+        <div class="score-box-number" id="finalBad">0</div>
+        <div class="score-box-label">❌ Incorrectas</div>
+      </div>
+    </div>
+
+    <div class="stars-row" id="starsRow">⭐⭐⭐</div>
+    <div class="result-msg" id="resultMsg">¡Excelente trabajo, campeón!</div>
+
+    <div class="result-btns">
+      <button class="btn-result btn-again" id="btnAgain">🔄 OTRO ROUND</button>
+      <button class="btn-result btn-change" id="btnChange">⚙️ CAMBIAR NÚMERO</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================
+//   GAME STATE
+// ============================
+const TOTAL_QUESTIONS = 10;
+const DIFFICULTY = { easy: 10, medium: 12, hard: 15 };
+const DIFF_LABELS = { easy: 'FÁCIL', medium: 'MEDIO', hard: 'DIFÍCIL' };
+const DIFF_CLASSES = { easy: 'easy', medium: 'medium', hard: 'hard' };
+let difficulty = 'easy';
+let masterNumber = 6;
+let currentQ = 0;
+let goodCount = 0;
+let badCount = 0;
+let currentNumber = 0;
+let isMultiple = false;
+let answering = false;
+let usedNumbers = new Set();
+
+// ============================
+//   ELEMENTS
+// ============================
+const screenInicio    = document.getElementById('screenInicio');
+const screenJuego     = document.getElementById('screenJuego');
+const screenResultado = document.getElementById('screenResultado');
+const masterDisp      = document.getElementById('masterNumberDisplay');
+const hudMaster       = document.getElementById('hudMaster');
+const hudGood         = document.getElementById('hudGood');
+const hudBad          = document.getElementById('hudBad');
+const hudDiff         = document.getElementById('hudDiff');
+const questionMaster  = document.getElementById('questionMaster');
+const numberCard      = document.getElementById('numberCard');
+const currentNumEl    = document.getElementById('currentNumber');
+const sadFaceEl       = document.querySelector('.sad-face');
+const progressBar     = document.getElementById('progressBar');
+const flashOverlay    = document.getElementById('flashOverlay');
+const finalGood       = document.getElementById('finalGood');
+const finalBad        = document.getElementById('finalBad');
+const starsRow        = document.getElementById('starsRow');
+const resultMsg       = document.getElementById('resultMsg');
+const resultTitle     = document.getElementById('resultTitle');
+const resultMaster    = document.getElementById('resultMaster');
+
+// ============================
+//   INICIO CONTROLS
+// ============================
+document.getElementById('btnMinus').addEventListener('click', () => {
+  if (masterNumber > 2) { masterNumber--; masterDisp.textContent = masterNumber; }
+});
+document.getElementById('btnPlus').addEventListener('click', () => {
+  if (masterNumber < 20) { masterNumber++; masterDisp.textContent = masterNumber; }
+});
+document.getElementById('btnStart').addEventListener('click', startGame);
+
+// Difficulty buttons
+document.querySelectorAll('.btn-diff').forEach(btn => {
+  btn.addEventListener('click', () => {
+    difficulty = btn.dataset.diff;
+    document.querySelectorAll('.btn-diff').forEach(b => b.className = 'btn-diff');
+    btn.classList.add(`active-${difficulty}`);
+  });
+});
+
+// ============================
+//   GAME CONTROLS
+// ============================
+document.getElementById('btnYes').addEventListener('click', () => handleAnswer(true));
+document.getElementById('btnNo').addEventListener('click',  () => handleAnswer(false));
+document.getElementById('btnAgain').addEventListener('click', startGame);
+document.getElementById('btnChange').addEventListener('click', goToInicio);
+
+document.addEventListener('keydown', (e) => {
+  if (!screenJuego.classList.contains('active')) return;
+  if (e.key === 's' || e.key === 'S') handleAnswer(true);
+  if (e.key === 'n' || e.key === 'N') handleAnswer(false);
+});
+
+// ============================
+//   SCREENS
+// ============================
+function showScreen(screen) {
+  [screenInicio, screenJuego, screenResultado].forEach(s => s.classList.remove('active'));
+  screen.classList.add('active');
+}
+
+function goToInicio() {
+  showScreen(screenInicio);
+  masterDisp.textContent = masterNumber;
+}
+
+// ============================
+//   NUMBER GENERATION
+// ============================
+function generateNumber() {
+  const maxMult = DIFFICULTY[difficulty];
+  const useMultiple = Math.random() < 0.5;
+  let num;
+  let attempts = 0;
+
+  if (useMultiple) {
+    do {
+      const mult = Math.floor(Math.random() * maxMult) + 1;
+      num = masterNumber * mult;
+      attempts++;
+    } while (usedNumbers.has(num) && attempts < 80);
+    isMultiple = true;
+  } else {
+    const maxNum = masterNumber * maxMult;
+    do {
+      const isTrap = Math.random() < 0.6;
+      if (isTrap) {
+        const nearMult = (Math.floor(Math.random() * maxMult) + 1) * masterNumber;
+        const offset = (Math.random() < 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
+        num = nearMult + offset;
+      } else {
+        num = Math.floor(Math.random() * (maxNum - 1)) + 2;
+      }
+      attempts++;
+    } while ((num % masterNumber === 0 || num <= 0 || num > maxNum || usedNumbers.has(num)) && attempts < 80);
+    if (!num || num % masterNumber === 0 || num <= 0) num = masterNumber * 2 + 1;
+    isMultiple = false;
+  }
+
+  usedNumbers.add(num);
+  return num;
+}
+
+// ============================
+//   GAME FLOW
+// ============================
+function startGame() {
+  currentQ = 0; goodCount = 0; badCount = 0; answering = false; usedNumbers = new Set();
+  hudMaster.textContent = masterNumber;
+  questionMaster.textContent = masterNumber;
+  hudGood.textContent = '0';
+  hudBad.textContent  = '0';
+  progressBar.style.width = '0%';
+  hudDiff.textContent = DIFF_LABELS[difficulty];
+  hudDiff.className = `hud-diff ${DIFF_CLASSES[difficulty]}`;
+  showScreen(screenJuego);
+  nextQuestion();
+}
+
+function nextQuestion() {
+  if (currentQ >= TOTAL_QUESTIONS) { showResult(); return; }
+  answering = false;
+
+  // Reset card
+  numberCard.classList.remove('shake','correct-pop','wrong','animate-in');
+  sadFaceEl.style.display = 'none';
+  currentNumEl.style.display = 'flex';
+  currentNumEl.style.color = '';
+
+  currentNumber = generateNumber();
+  currentNumEl.textContent = currentNumber;
+
+  // Trigger animation
+  void numberCard.offsetWidth;
+  numberCard.classList.add('animate-in');
+
+  progressBar.style.width = `${(currentQ / TOTAL_QUESTIONS) * 100}%`;
+}
+
+function handleAnswer(userSaysYes) {
+  if (answering) return;
+  answering = true;
+
+  const correct = (userSaysYes === isMultiple);
+  currentQ++;
+  progressBar.style.width = `${(currentQ / TOTAL_QUESTIONS) * 100}%`;
+
+  if (correct) {
+    goodCount++;
+    hudGood.textContent = goodCount;
+    // Green flash
+    triggerFlash('flash-green');
+    // Card pop
+    numberCard.classList.add('correct-pop');
+    // Confetti burst
+    launchConfetti(150, false);
+    setTimeout(nextQuestion, 700);
+  } else {
+    badCount++;
+    hudBad.textContent = badCount;
+    // Red flash + shake
+    triggerFlash('flash-red');
+    numberCard.classList.add('shake');
+    // Show sad face
+    setTimeout(() => {
+      numberCard.classList.add('wrong');
+      sadFaceEl.style.display = 'flex';
+    }, 100);
+    setTimeout(nextQuestion, 1100);
+  }
+}
+
+function triggerFlash(cls) {
+  flashOverlay.className = `flash-overlay ${cls} visible`;
+  setTimeout(() => { flashOverlay.classList.remove('visible'); }, 180);
+}
+
+function showResult() {
+  showScreen(screenResultado);
+  resultMaster.textContent = masterNumber;
+  finalGood.textContent = goodCount;
+  finalBad.textContent  = badCount;
+
+  const pct = goodCount / TOTAL_QUESTIONS;
+  if (pct === 1) {
+    starsRow.textContent  = '⭐⭐⭐';
+    resultTitle.innerHTML = '¡PERFECTO!';
+    resultMsg.textContent = '¡Eres un maestro de los múltiplos! 🏆';
+  } else if (pct >= 0.7) {
+    starsRow.textContent  = '⭐⭐';
+    resultTitle.innerHTML = '¡MUY BIEN!';
+    resultMsg.textContent = '¡Casi perfecto! Sigue practicando. 💪';
+  } else if (pct >= 0.5) {
+    starsRow.textContent  = '⭐';
+    resultTitle.innerHTML = '¡BUEN<br>INTENTO!';
+    resultMsg.textContent = '¡Vas por buen camino! ¿Lo intentamos otra vez? 🚀';
+  } else {
+    starsRow.textContent  = '🎯';
+    resultTitle.innerHTML = '¡A<br>PRACTICAR!';
+    resultMsg.textContent = 'Los múltiplos no se rinden. ¡Tú tampoco! 💡';
+  }
+
+  // Final confetti burst
+  setTimeout(() => launchConfetti(300, true), 300);
+}
+
+// ============================
+//   CONFETTI ENGINE
+// ============================
+const canvas = document.getElementById('confettiCanvas');
+const ctx    = canvas.getContext('2d');
+let particles = [];
+let animFrame;
+
+function resizeCanvas() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const COLORS = [
+  '#FF6B6B','#FFE66D','#4ECDC4','#45B7D1','#96E6A1',
+  '#DDA0DD','#FF8C69','#87CEEB','#F0E68C','#98FB98',
+  '#FF69B4','#00CED1','#FF4500','#7B68EE','#32CD32'
+];
+
+function createParticle(x, y, burst) {
+  return {
+    x, y,
+    vx: (Math.random() - 0.5) * (burst ? 18 : 10),
+    vy: (Math.random() * -12) - (burst ? 6 : 2),
+    w: Math.random() * 12 + 5,
+    h: Math.random() * 6 + 3,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    rotation: Math.random() * Math.PI * 2,
+    rotSpeed: (Math.random() - 0.5) * 0.25,
+    gravity: 0.35,
+    opacity: 1,
+    shape: Math.random() < 0.4 ? 'circle' : 'rect'
+  };
+}
+
+function launchConfetti(count, fullScreen) {
+  cancelAnimationFrame(animFrame);
+  particles = [];
+
+  const cx = canvas.width  / 2;
+  const cy = canvas.height / 2;
+
+  for (let i = 0; i < count; i++) {
+    const x = fullScreen ? Math.random() * canvas.width  : cx + (Math.random()-0.5)*80;
+    const y = fullScreen ? Math.random() * canvas.height * 0.4 : cy + (Math.random()-0.5)*80;
+    particles.push(createParticle(x, y, fullScreen));
+  }
+  animateConfetti();
+}
+
+function animateConfetti() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles = particles.filter(p => p.opacity > 0.02);
+
+  for (const p of particles) {
+    p.x  += p.vx;
+    p.y  += p.vy;
+    p.vy += p.gravity;
+    p.vx *= 0.99;
+    p.rotation += p.rotSpeed;
+    if (p.y > canvas.height * 0.7) p.opacity -= 0.025;
+
+    ctx.save();
+    ctx.globalAlpha = p.opacity;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rotation);
+    ctx.fillStyle = p.color;
+
+    if (p.shape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+    }
+    ctx.restore();
+  }
+
+  if (particles.length > 0) {
+    animFrame = requestAnimationFrame(animateConfetti);
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+</script>
+</body>
+</html>
