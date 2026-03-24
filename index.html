@@ -94,7 +94,7 @@
   /* ===== INICIO SCREEN ===== */
   .game-title {
     font-family: 'Bangers', cursive;
-    font-size: clamp(3rem, 10vw, 7rem);
+    font-size: clamp(2.2rem, 7vw, 6rem);
     color: var(--dark);
     text-shadow:
       4px 4px 0 rgba(0,0,0,0.2),
@@ -102,30 +102,30 @@
     letter-spacing: 4px;
     line-height: 1;
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
 
   .subtitle {
     font-family: 'Bangers', cursive;
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: clamp(0.75rem, 2vw, 1.2rem);
     color: rgba(0,0,0,0.5);
     letter-spacing: 3px;
-    margin-bottom: 40px;
+    margin-bottom: clamp(12px, 3vh, 32px);
     text-align: center;
   }
 
   .config-card {
     background: var(--dark);
-    border-radius: 24px;
-    padding: 40px 50px;
+    border-radius: 20px;
+    padding: clamp(16px, 3vh, 36px) clamp(20px, 4vw, 50px);
     box-shadow:
       8px 8px 0 rgba(0,0,0,0.3),
       0 0 0 4px var(--dark);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    width: min(420px, 90vw);
+    gap: clamp(10px, 2vh, 20px);
+    width: min(420px, 92vw);
   }
 
   .config-label {
@@ -160,9 +160,9 @@
 
   #masterNumberDisplay {
     font-family: 'Bangers', cursive;
-    font-size: 5rem;
+    font-size: clamp(3.5rem, 8vh, 5rem);
     color: var(--yellow);
-    min-width: 100px;
+    min-width: 90px;
     text-align: center;
     line-height: 1;
     text-shadow: 0 0 20px rgba(255,215,0,0.5);
@@ -192,10 +192,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 24px;
+    padding: 8px 16px;
     background: var(--dark);
     z-index: 20;
-    gap: 12px;
+    gap: 10px;
+    min-height: 46px;
   }
 
   .hud-badge {
@@ -240,15 +241,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 40px;
-    padding-top: 80px;
+    gap: clamp(8px, 2.5vh, 32px);
+    padding-top: clamp(52px, 8vh, 80px);
+    padding-bottom: clamp(8px, 2vh, 24px);
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
   }
 
   .question-label {
     font-family: 'Bangers', cursive;
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: clamp(0.85rem, 2.2vw, 1.4rem);
     color: rgba(0,0,0,0.45);
     letter-spacing: 3px;
     text-align: center;
@@ -256,23 +259,24 @@
 
   /* NUMBER CARD */
   .number-card {
-    width: clamp(180px, 35vw, 280px);
-    height: clamp(180px, 35vw, 280px);
+    width: clamp(120px, 22vh, 240px);
+    height: clamp(120px, 22vh, 240px);
     background: var(--dark);
-    border-radius: 32px;
+    border-radius: clamp(18px, 3vh, 32px);
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow:
-      10px 10px 0 rgba(0,0,0,0.25),
-      0 0 0 5px rgba(255,255,255,0.1) inset;
+      8px 8px 0 rgba(0,0,0,0.25),
+      0 0 0 4px rgba(255,255,255,0.1) inset;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
   }
 
   #currentNumber {
     font-family: 'Bangers', cursive;
-    font-size: clamp(5rem, 15vw, 10rem);
+    font-size: clamp(3.5rem, 10vh, 8rem);
     color: var(--yellow);
     text-shadow: 0 0 30px rgba(255,215,0,0.4);
     line-height: 1;
@@ -280,7 +284,7 @@
   }
 
   .sad-face {
-    font-size: clamp(5rem, 15vw, 10rem);
+    font-size: clamp(3.5rem, 10vh, 8rem);
     display: none;
     animation: popIn 0.3s ease;
   }
@@ -321,15 +325,16 @@
   /* BUTTONS */
   .btn-row {
     display: flex;
-    gap: clamp(16px, 4vw, 40px);
+    gap: clamp(12px, 4vw, 48px);
     align-items: center;
+    flex-shrink: 0;
   }
 
   .answer-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: clamp(4px, 1vh, 10px);
     cursor: pointer;
     border: none;
     background: none;
@@ -338,13 +343,13 @@
   .answer-btn:active { transform: scale(0.9); }
 
   .shield {
-    width: clamp(90px, 18vw, 140px);
-    height: clamp(100px, 20vw, 155px);
+    width: clamp(64px, 12vh, 130px);
+    height: clamp(72px, 13.5vh, 144px);
     border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    font-size: clamp(1.8rem, 5vh, 4rem);
     transition: all 0.15s;
     position: relative;
   }
@@ -352,31 +357,31 @@
   .shield-yes {
     background: linear-gradient(145deg, #3EE88A, var(--green));
     box-shadow:
-      0 8px 0 var(--green-dark),
-      0 12px 24px rgba(46,204,113,0.4),
+      0 6px 0 var(--green-dark),
+      0 10px 20px rgba(46,204,113,0.4),
       inset 0 2px 4px rgba(255,255,255,0.3);
   }
   .shield-no {
     background: linear-gradient(145deg, #F0786B, var(--red));
     box-shadow:
-      0 8px 0 var(--red-dark),
-      0 12px 24px rgba(231,76,60,0.4),
+      0 6px 0 var(--red-dark),
+      0 10px 20px rgba(231,76,60,0.4),
       inset 0 2px 4px rgba(255,255,255,0.3);
   }
 
   .answer-btn:hover .shield-yes {
-    box-shadow: 0 12px 0 var(--green-dark), 0 18px 30px rgba(46,204,113,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+    box-shadow: 0 10px 0 var(--green-dark), 0 16px 28px rgba(46,204,113,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
     transform: translateY(-4px);
   }
   .answer-btn:hover .shield-no {
-    box-shadow: 0 12px 0 var(--red-dark), 0 18px 30px rgba(231,76,60,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+    box-shadow: 0 10px 0 var(--red-dark), 0 16px 28px rgba(231,76,60,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
     transform: translateY(-4px);
   }
   .answer-btn:active .shield { transform: translateY(4px) !important; }
 
   .btn-label {
     font-family: 'Bangers', cursive;
-    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    font-size: clamp(1rem, 2.5vh, 1.5rem);
     letter-spacing: 2px;
     color: var(--dark);
   }
@@ -384,14 +389,14 @@
   /* ===== RESULTADO SCREEN ===== */
   .result-card {
     background: var(--dark);
-    border-radius: 28px;
-    padding: clamp(28px, 5vw, 52px) clamp(28px, 6vw, 64px);
+    border-radius: 24px;
+    padding: clamp(16px, 3vh, 44px) clamp(20px, 4vw, 56px);
     box-shadow: 10px 10px 0 rgba(0,0,0,0.25);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    width: min(500px, 90vw);
+    gap: clamp(10px, 2vh, 20px);
+    width: min(500px, 92vw);
     text-align: center;
   }
 
@@ -502,11 +507,10 @@
   .key-hint {
     font-family: 'Nunito', sans-serif;
     font-weight: 700;
-    font-size: 0.75rem;
-    color: rgba(0,0,0,0.35);
+    font-size: 0.65rem;
+    color: rgba(0,0,0,0.3);
     letter-spacing: 1px;
     text-align: center;
-    margin-top: -20px;
   }
 
   kbd {
@@ -574,6 +578,131 @@
   .hud-diff.easy   { color: #2ECC71; border-color: #2ECC71; }
   .hud-diff.medium { color: #FFA500; border-color: #FFA500; }
   .hud-diff.hard   { color: #E74C3C; border-color: #E74C3C; }
+
+  /* QUESTION COUNT SELECTOR */
+  .qcount-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .btn-qcount {
+    flex: 1;
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 12px 4px;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(255,255,255,0.45);
+    transition: all 0.15s;
+  }
+  .btn-qcount:hover { border-color: rgba(255,215,0,0.4); color: rgba(255,215,0,0.7); }
+  .btn-qcount.active-q {
+    background: rgba(255,215,0,0.15);
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
+
+  /* TABLE PANEL */
+  .table-panel {
+    position: fixed;
+    top: 46px; right: 0;
+    width: clamp(170px, 22vw, 220px);
+    height: calc(100vh - 46px);
+    background: var(--dark);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -6px 0 30px rgba(0,0,0,0.35);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    overflow: hidden;
+  }
+  .table-panel.open { transform: translateX(0); }
+
+  .table-panel-header {
+    background: rgba(255,215,0,0.1);
+    border-bottom: 2px solid rgba(255,215,0,0.15);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .table-panel-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    color: var(--yellow);
+    letter-spacing: 2px;
+  }
+  .btn-close-table {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+    transition: color 0.15s;
+  }
+  .btn-close-table:hover { color: var(--yellow); }
+
+  .table-rows {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .table-rows::-webkit-scrollbar { width: 4px; }
+  .table-rows::-webkit-scrollbar-track { background: transparent; }
+  .table-rows::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.2); border-radius: 4px; }
+
+  .table-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 8px;
+    padding: 7px 12px;
+    background: rgba(255,255,255,0.04);
+    transition: background 0.2s;
+  }
+  .table-row.highlight {
+    background: rgba(255,215,0,0.18);
+  }
+  .table-row-expr {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+  }
+  .table-row-result {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    color: var(--yellow);
+    letter-spacing: 1px;
+  }
+  .table-row.highlight .table-row-expr { color: rgba(255,215,0,0.8); }
+
+  /* SHOW TABLE BUTTON in HUD */
+  .btn-show-table {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(0.75rem, 2vw, 0.95rem);
+    letter-spacing: 1px;
+    background: rgba(255,215,0,0.12);
+    border: 2px solid rgba(255,215,0,0.3);
+    border-radius: 8px;
+    color: var(--yellow);
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-show-table:hover { background: rgba(255,215,0,0.22); border-color: var(--yellow); }
+  .btn-show-table.active { background: rgba(255,215,0,0.25); border-color: var(--yellow); }
 </style>
 </head>
 <body>
@@ -614,6 +743,13 @@
       </button>
     </div>
 
+    <div class="diff-label">📝 PREGUNTAS</div>
+    <div class="qcount-row">
+      <button class="btn-qcount active-q" data-q="5">5</button>
+      <button class="btn-qcount" data-q="10">10</button>
+      <button class="btn-qcount" data-q="15">15</button>
+    </div>
+
     <button class="btn-start" id="btnStart">🚀 &nbsp;¡COMENZAR!</button>
   </div>
 </div>
@@ -626,6 +762,7 @@
       <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
     </div>
     <div class="hud-score">
+      <button class="btn-show-table" id="btnShowTable">📋 VER TABLA</button>
       <div class="hud-diff easy" id="hudDiff">FÁCIL</div>
       <div class="hud-badge score-good">✅ <span id="hudGood">0</span></div>
       <div class="hud-badge score-bad">❌ <span id="hudBad">0</span></div>
@@ -653,6 +790,15 @@
 
     <div class="key-hint"><kbd>S</kbd> = SÍ &nbsp;|&nbsp; <kbd>N</kbd> = NO</div>
   </div>
+</div>
+
+<!-- ===== TABLE PANEL ===== -->
+<div class="table-panel" id="tablePanel">
+  <div class="table-panel-header">
+    <div class="table-panel-title">📋 TABLA ×<span id="tablePanelFactor">6</span></div>
+    <button class="btn-close-table" id="btnCloseTable">✕</button>
+  </div>
+  <div class="table-rows" id="tableRows"></div>
 </div>
 
 <!-- ===== SCREEN: RESULTADO ===== -->
@@ -691,6 +837,7 @@ const DIFFICULTY = { easy: 10, medium: 12, hard: 15 };
 const DIFF_LABELS = { easy: 'FÁCIL', medium: 'MEDIO', hard: 'DIFÍCIL' };
 const DIFF_CLASSES = { easy: 'easy', medium: 'medium', hard: 'hard' };
 let difficulty = 'easy';
+let totalQuestions = 5;
 let masterNumber = 6;
 let currentQ = 0;
 let goodCount = 0;
@@ -723,6 +870,9 @@ const starsRow        = document.getElementById('starsRow');
 const resultMsg       = document.getElementById('resultMsg');
 const resultTitle     = document.getElementById('resultTitle');
 const resultMaster    = document.getElementById('resultMaster');
+const tablePanel      = document.getElementById('tablePanel');
+const tablePanelFactor= document.getElementById('tablePanelFactor');
+const tableRowsEl     = document.getElementById('tableRows');
 
 // ============================
 //   INICIO CONTROLS
@@ -743,6 +893,45 @@ document.querySelectorAll('.btn-diff').forEach(btn => {
     btn.classList.add(`active-${difficulty}`);
   });
 });
+
+// Question count buttons
+document.querySelectorAll('.btn-qcount').forEach(btn => {
+  btn.addEventListener('click', () => {
+    totalQuestions = parseInt(btn.dataset.q);
+    document.querySelectorAll('.btn-qcount').forEach(b => b.classList.remove('active-q'));
+    btn.classList.add('active-q');
+  });
+});
+
+// Table panel toggle
+document.getElementById('btnShowTable').addEventListener('click', () => {
+  const isOpen = tablePanel.classList.contains('open');
+  if (isOpen) { closeTable(); } else { openTable(); }
+});
+document.getElementById('btnCloseTable').addEventListener('click', closeTable);
+
+function openTable() {
+  const maxMult = DIFFICULTY[difficulty];
+  tablePanelFactor.textContent = masterNumber;
+  tableRowsEl.innerHTML = '';
+  for (let i = 1; i <= maxMult; i++) {
+    const row = document.createElement('div');
+    row.className = 'table-row';
+    row.innerHTML = `
+      <span class="table-row-expr">${masterNumber} × ${i} =</span>
+      <span class="table-row-result">${masterNumber * i}</span>`;
+    tableRowsEl.appendChild(row);
+  }
+  tablePanel.classList.add('open');
+  document.getElementById('btnShowTable').classList.add('active');
+}
+
+function closeTable() {
+  tablePanel.classList.remove('open');
+  document.getElementById('btnShowTable').classList.remove('active');
+}
+
+function updateTableHighlight() { /* desactivado */ }
 
 // ============================
 //   GAME CONTROLS
@@ -820,12 +1009,13 @@ function startGame() {
   progressBar.style.width = '0%';
   hudDiff.textContent = DIFF_LABELS[difficulty];
   hudDiff.className = `hud-diff ${DIFF_CLASSES[difficulty]}`;
+  closeTable();
   showScreen(screenJuego);
   nextQuestion();
 }
 
 function nextQuestion() {
-  if (currentQ >= TOTAL_QUESTIONS) { showResult(); return; }
+  if (currentQ >= totalQuestions) { showResult(); return; }
   answering = false;
 
   // Reset card
@@ -837,11 +1027,14 @@ function nextQuestion() {
   currentNumber = generateNumber();
   currentNumEl.textContent = currentNumber;
 
+  // Update table highlight if panel is open
+  if (tablePanel.classList.contains('open')) updateTableHighlight();
+
   // Trigger animation
   void numberCard.offsetWidth;
   numberCard.classList.add('animate-in');
 
-  progressBar.style.width = `${(currentQ / TOTAL_QUESTIONS) * 100}%`;
+  progressBar.style.width = `${(currentQ / totalQuestions) * 100}%`;
 }
 
 function handleAnswer(userSaysYes) {
@@ -850,7 +1043,7 @@ function handleAnswer(userSaysYes) {
 
   const correct = (userSaysYes === isMultiple);
   currentQ++;
-  progressBar.style.width = `${(currentQ / TOTAL_QUESTIONS) * 100}%`;
+  progressBar.style.width = `${(currentQ / totalQuestions) * 100}%`;
 
   if (correct) {
     goodCount++;
@@ -883,12 +1076,13 @@ function triggerFlash(cls) {
 }
 
 function showResult() {
+  closeTable();
   showScreen(screenResultado);
   resultMaster.textContent = masterNumber;
   finalGood.textContent = goodCount;
   finalBad.textContent  = badCount;
 
-  const pct = goodCount / TOTAL_QUESTIONS;
+  const pct = goodCount / totalQuestions;
   if (pct === 1) {
     starsRow.textContent  = '⭐⭐⭐';
     resultTitle.innerHTML = '¡PERFECTO!';
